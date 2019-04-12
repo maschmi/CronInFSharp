@@ -3,7 +3,8 @@
 open System
 
 type Interval = 
-    | Hourly of int    
+    | Hourly of hour: int
+    | WeekdayAt of weekday: DayOfWeek * hour: int
     | Disabled
 
 type Command = {
@@ -18,10 +19,16 @@ let hourly h n (c:Command) =
     | 0 -> Some c
     | _ -> None
 
+let weekday (c:Command) (wd:DayOfWeek) (n:DayOfWeek) =
+    match wd.CompareTo(n) with
+    | 0 -> Some c
+    | _ -> None
+
 let intervalDue (c:Command) =
-    let now = DateTime.Now
+    let now = DateTime.Now    
     match c.interval with
     | Hourly h -> hourly h now.Hour c
+    | WeekdayAt (wd,h) -> weekday c wd now.DayOfWeek |> Option.bind (hourly h now.Hour)
     | Disabled -> None
 
 let printMessage c =
@@ -38,7 +45,7 @@ let execute how (c:Command) =
 let log =
     execute printMessage 
 
-let test = { id ="test";  message = "log me"; interval = Hourly 9 }
+let test = { id ="test";  message = "log me"; interval = WeekdayAt (DayOfWeek.Friday, 19) }
 
 [<EntryPoint>]
 let main argv =
