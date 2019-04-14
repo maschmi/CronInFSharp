@@ -32,17 +32,18 @@ module Cron =
         | 0 -> Some c
         | _ -> None
 
-    let intervalDue (c:Command) =
-        let now = DateTime.Now    
+    let intervalDue (dt:DateTime) (c:Command) =        
         match c.interval with
-        | Hourly h -> hourly h now.Hour c
-        | DailyAt oc -> oclock oc now.Hour c
-        | WeekdayAt (wd,h) -> weekday c wd now.DayOfWeek |> Option.bind (hourly h now.Hour)
+        | Hourly h -> hourly h dt.Hour c
+        | DailyAt oc -> oclock oc dt.Hour c
+        | WeekdayAt (wd,h) -> weekday c wd dt.DayOfWeek |> Option.bind (hourly h dt.Hour)
         | Disabled -> None
 
+    let intervalDueNow =
+        intervalDue DateTime.Now
 
-
+    
     let execute r e (c:Command) =
-        match intervalDue c with
+        match intervalDueNow c with
         | Some(x) -> r x
         | None -> e c
