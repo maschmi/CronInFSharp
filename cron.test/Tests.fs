@@ -3,7 +3,7 @@ module Tests
 open System
 open Xunit
 open Cron
-open System.Security
+open Microsoft.VisualStudio.TestPlatform.CommunicationUtilities
 
 let testExecute (dt:DateTime) c =
     Cron.intervalDue dt c
@@ -90,9 +90,28 @@ let createDailyCommand h =
 let daysToRun d =
     d |> List.map createTestDayily
 
+let createTestTimes maxDay =
+    daysToRun [1..maxDay] |> List.map (fun fl -> List.map fl hoursOfDay) |> Seq.concat |> List.ofSeq
+
 [<Fact>]
 let ExecuteDaily_ExecutesAtGivenHour () =
     let commands = hoursOfDay |> List.map createDailyCommand
-    let testTimes =  daysToRun [1..30] |> List.map (fun fl -> List.map fl hoursOfDay) |> Seq.concat |> List.ofSeq
+    let testTimes = createTestTimes 30
     runCommandsForTest testTimes commands
+   
+let createWeekdayCommand wd h =
+    { id = "weekdaysAt"; message = "test"; interval = WeekdayAt (wd,h)}
+
+let createCommandForEveryWeekday h =
+    [0..6] |> List.map enum<DayOfWeek> |> List.map createWeekdayCommand
+
+let randomHour = 
+    let rnd = System.Random()
+    rnd.Next(0,23)
     
+
+[<Fact>]
+let ExecuteEveryWeekdayAt_ExecutesAtGivenHour () =
+    let commands = randomHour |> createCommandForEveryWeekday
+    let testTimes = createTestTimes 30
+    runCommandsForTest testTimes commands
