@@ -36,7 +36,7 @@ module Cron =
         match c.interval with
         | Hourly h -> hourly h dt.Hour c
         | DailyAt oc -> oclock oc dt.Hour c
-        | WeekdayAt (wd,h) -> weekday c wd dt.DayOfWeek |> Option.bind (hourly h dt.Hour)
+        | WeekdayAt (wd,h) -> weekday c wd dt.DayOfWeek |> Option.bind (oclock h dt.Hour)
         | Disabled -> None
 
     let intervalDueNow =
