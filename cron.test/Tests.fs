@@ -11,12 +11,12 @@ let testExecute (dt:DateTime) c =
 let assertSomeWithMessage m c =
     match c with
     | Some(x) -> Assert.True(true)
-    | None -> Assert.True(false, "Expected Some(T) but got None" + m)
+    | None -> Assert.True(false, "Expected Some(T) but got None " + m)
 
 let assertNoneWithMessage m c =
     match c with
-    | Some(x) -> Assert.True(false, "Expeted None but got Some(T)" + m)
-    | None -> Assert.True(true)
+    | Some(x) -> Assert.False(true, "Expeted None but got Some(T) " + m)
+    | None -> Assert.False(false)
 
 let testIntervals = [ 
         1
@@ -55,12 +55,19 @@ let checkExecutionDailyAt (dt:DateTime) h c =
     | 0 -> testExecute dt c |> assertSome
     | _ -> testExecute dt c |> assertNone
 
+let checkExecutionWeekdays (dt:DateTime) wd h c =  
+     let assertSome = getTestDetail dt c |> assertSomeWithMessage
+     let assertNone = getTestDetail dt c |> assertNoneWithMessage
+     match dt.DayOfWeek = wd with
+     | true -> checkExecutionDailyAt dt h c
+     | false -> testExecute dt c |> assertNone
+
 let assertCommandExecution (dt:DateTime) c =        
     match c.interval with
     | Hourly h -> checkExecutionHrly dt h c 
     | Disabled -> testExecute dt c |> assertNoneWithMessage "disabled"
     | DailyAt h -> checkExecutionDailyAt dt h c
-    | _ -> Assert.False(true, "untested interval")
+    | WeekdayAt (wd,h) -> checkExecutionWeekdays dt wd h c    
 
 let prepareTestTimeFunction dt =
        List.map assertCommandExecution dt
@@ -99,19 +106,20 @@ let ExecuteDaily_ExecutesAtGivenHour () =
     let testTimes = createTestTimes 30
     runCommandsForTest testTimes commands
    
-let createWeekdayCommand wd h =
+let createWeekdayCommand h wd =
     { id = "weekdaysAt"; message = "test"; interval = WeekdayAt (wd,h)}
 
 let createCommandForEveryWeekday h =
-    [0..6] |> List.map enum<DayOfWeek> |> List.map createWeekdayCommand
+    let days = List.map enum<DayOfWeek> [0..6] 
+    List.map (createWeekdayCommand h) days
+    
 
 let randomHour = 
     let rnd = System.Random()
     rnd.Next(0,23)
-    
 
 [<Fact>]
 let ExecuteEveryWeekdayAt_ExecutesAtGivenHour () =
-    let commands = randomHour |> createCommandForEveryWeekday
+    let commands = createCommandForEveryWeekday randomHour
     let testTimes = createTestTimes 30
-    runCommandsForTest testTimes commands
+    runCommandsForTest testTimes commands 
