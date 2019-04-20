@@ -50,6 +50,9 @@ let createWeekdayCommand h wd =
 let createTestDate y m d h mm s =
     DateTime(y, m, d, h, mm, s)
 
+let createHourAtDay y m d h =
+    createTestDate y m d h 15 0
+
 let createTestHours h =
     createTestDate 2019 4 13 h 15 00
     
@@ -86,7 +89,8 @@ let assertCommandExecution (dt:DateTime) c =
     | Hourly h -> checkExecutionHrlyInterval dt h c 
     | Disabled -> testExecute dt c |> assertNone
     | DailyAt h -> checkExecutionAtHour dt h c
-    | WeekdayAt (wd,h) -> checkExecutionWeekdaysAt dt wd h c    
+    | WeekdayAt (wd,h) -> checkExecutionWeekdaysAt dt wd h c
+//    | MonthlyAt (n,wd,h) -> ignore
 
 let listFunCrossList a funlist =
     List.map (fun f -> List.map f a) funlist
@@ -116,4 +120,34 @@ let ExecuteDaily_ExecutesAtGivenHour () =
 let ExecuteEveryWeekdayAt_ExecutesAtGivenHour () =
     let commands = createCommandForEveryWeekday randomHour
     let testTimes = createTestTimes 30
-    runCommandsForTest testTimes commands 
+    runCommandsForTest testTimes commands
+
+// [<Fact>]
+// let ExecuteFirstMondayInApril_ExecutesAtGivenHourAtFirstMonday () =
+//     let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
+//     let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 01)
+//     runCommandsForTest testTimes [command]
+
+// [<Fact>]
+// let ExecuteFirstMondayInApril_NotExecutesAtGivenHourAtSecondMonday () =
+//     let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
+//     let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 08)
+//     runCommandsForTest testTimes [command]
+
+// [<Fact>]
+// let ExecuteFirstMondayInApril_NotExecutesAtGivenHourAtThirdMonday () =
+//     let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
+//     let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 15)
+//     runCommandsForTest testTimes [command]
+
+// [<Fact>]
+// let ExecuteFirstMondayInApril_NotExecutesAtGivenHourAtFourhtMonday () =
+//     let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
+//     let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 22)
+//     runCommandsForTest testTimes [command]
+
+// [<Fact>]
+// let ExecuteFirstMondayInApril_NotExecutesAtGivenHourAtLastMonday () =
+//     let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
+//     let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 29)
+//     runCommandsForTest testTimes [command] 
