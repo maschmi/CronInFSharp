@@ -20,10 +20,10 @@ let assertNoneWithMessage c m =
     | Some(x) -> Assert.False(true, "Expeted None but got Some(T) " + m)
     | None -> Assert.False(false)
 
-let assertSome dt c  =
+let assertSome (dt:DateTime) (c:Command option)  =
     getTestDetail dt c |> assertSomeWithMessage c
 
-let assertNone dt c =
+let assertNone (dt:DateTime) (c:Command option) =
     getTestDetail dt c |> assertNoneWithMessage c
 
 let testIntervals = [ 
@@ -71,23 +71,23 @@ let createCommandForEveryWeekday h =
     
 let checkExecutionHrlyInterval (dt:DateTime) h c =
     match dt.Hour % h with
-    | 0 -> testExecute dt c |> assertSome
-    | _ -> testExecute dt c |> assertNone
+    | 0 -> testExecute dt c |> assertSome dt
+    | _ -> testExecute dt c |> assertNone dt
 
 let checkExecutionAtHour (dt:DateTime) h c =
     match dt.Hour - h with
-    | 0 -> testExecute dt c |> assertSome
-    | _ -> testExecute dt c |> assertNone
+    | 0 -> testExecute dt c |> assertSome dt
+    | _ -> testExecute dt c |> assertNone dt
 
 let checkExecutionWeekdaysAt (dt:DateTime) wd h c =  
      match dt.DayOfWeek = wd with
      | true -> checkExecutionAtHour dt h c
-     | false -> testExecute dt c |> assertNone
+     | false -> testExecute dt c |> assertNone dt
 
 let assertCommandExecution (dt:DateTime) c =        
     match c.interval with
     | Hourly h -> checkExecutionHrlyInterval dt h c 
-    | Disabled -> testExecute dt c |> assertNone
+    | Disabled -> testExecute dt c |> assertNone dt
     | DailyAt h -> checkExecutionAtHour dt h c
     | WeekdayAt (wd,h) -> checkExecutionWeekdaysAt dt wd h c
 //    | MonthlyAt (n,wd,h) -> ignore
