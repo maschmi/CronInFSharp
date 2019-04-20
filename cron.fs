@@ -3,18 +3,18 @@ namespace Cron
 open System
 
 
-// type OccurenceInMonth =
-//     | First
-//     | Second
-//     | Thrid
-//     | Last
+type OccurenceInMonth =
+    | First
+    | Second
+    | Thrid
+    | Last
 
 
 type Interval = 
     | Hourly of hour: int
     | DailyAt of oClock: int
     | WeekdayAt of weekday: DayOfWeek * oClock: int
-  //  | MonthlyAt of nth: OccurenceInMonht * weekday: DayOfWeek * oClock: int
+    | MonthlyAt of nth: OccurenceInMonth * weekday: DayOfWeek * oClock: int
     | Disabled
 
 type Command = {
@@ -46,7 +46,7 @@ module Cron =
         | Hourly h -> hourly h dt.Hour c
         | DailyAt oc -> oclock oc dt.Hour c
         | WeekdayAt (wd,h) -> weekday c wd dt.DayOfWeek |> Option.bind (oclock h dt.Hour)
-        // | MonthlyAt (n,wd,h) -> None
+        | MonthlyAt (n,wd,h) -> None
         | Disabled -> None
 
     let intervalDueNow =

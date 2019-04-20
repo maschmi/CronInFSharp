@@ -90,7 +90,7 @@ let assertCommandExecution (dt:DateTime) c =
     | Disabled -> testExecute dt c |> assertNone dt
     | DailyAt h -> checkExecutionAtHour dt h c
     | WeekdayAt (wd,h) -> checkExecutionWeekdaysAt dt wd h c
-//    | MonthlyAt (n,wd,h) -> ignore
+    | MonthlyAt (n,wd,h) -> Assert.False(true)
 
 let listFunCrossList a funlist =
     List.map (fun f -> List.map f a) funlist
@@ -122,32 +122,32 @@ let ExecuteEveryWeekdayAt_ExecutesAtGivenHour () =
     let testTimes = createTestTimes 30
     runCommandsForTest testTimes commands
 
-// [<Fact>]
-// let ExecuteFirstMondayInApril_ExecutesAtGivenHourAtFirstMonday () =
-//     let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
-//     let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 01)
-//     runCommandsForTest testTimes [command]
+[<Fact>]
+let ExecuteFirstMondayInApril_ExecutesAtGivenHourAtFirstMonday () =
+    let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
+    let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 01)
+    runCommandsForTest testTimes [command]
 
-// [<Fact>]
-// let ExecuteFirstMondayInApril_NotExecutesAtGivenHourAtSecondMonday () =
-//     let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
-//     let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 08)
-//     runCommandsForTest testTimes [command]
+[<Fact>]
+let ExecuteFirstMondayInApril_NotExecutesAtGivenHourAtSecondMonday () =
+    let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
+    let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 08)
+    runCommandsForTest testTimes [command]
 
-// [<Fact>]
-// let ExecuteFirstMondayInApril_NotExecutesAtGivenHourAtThirdMonday () =
-//     let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
-//     let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 15)
-//     runCommandsForTest testTimes [command]
+[<Fact>]
+let ExecuteFirstMondayInApril_NotExecutesAtGivenHourAtThirdMonday () =
+    let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
+    let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 15)
+    runCommandsForTest testTimes [command]
 
-// [<Fact>]
-// let ExecuteFirstMondayInApril_NotExecutesAtGivenHourAtFourhtMonday () =
-//     let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
-//     let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 22)
-//     runCommandsForTest testTimes [command]
+[<Fact>]
+let ExecuteFirstMondayInApril_NotExecutesAtGivenHourAtFourhtMonday () =
+    let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
+    let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 22)
+    runCommandsForTest testTimes [command]
 
-// [<Fact>]
-// let ExecuteFirstMondayInApril_NotExecutesAtGivenHourAtLastMonday () =
-//     let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
-//     let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 29)
-//     runCommandsForTest testTimes [command] 
+[<Fact>]
+let ExecuteFirstMondayInApril_NotExecutesAtGivenHourAtLastMonday () =
+    let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
+    let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 29)
+    runCommandsForTest testTimes [command] 
