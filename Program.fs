@@ -2,7 +2,7 @@
 
 
 open System
-open Cron
+open Inw.Cron
 
 [<EntryPoint>]
 let main argv =

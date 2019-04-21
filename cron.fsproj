@@ -4,6 +4,8 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure.fs" />
+    <Compile Include="CronDomainType.fs" />
     <Compile Include="cron.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
