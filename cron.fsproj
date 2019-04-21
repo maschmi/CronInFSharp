@@ -5,8 +5,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Infrastructure.fs" />
+    <Compile Include="JsonSerializer.fs" />
     <Compile Include="CronDomainType.fs" />
-    <Compile Include="cron.fs" />
+    <Compile Include="CronDomain.fs" />
+    <Compile Include="CronCommandRepository.fs" />
+    <Compile Include="CronSerializer.fs" />
     <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
   </ItemGroup>
 </Project>
