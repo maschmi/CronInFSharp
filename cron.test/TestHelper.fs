@@ -82,9 +82,9 @@ module CronTestHelper =
         | _ -> testExecute dt c |> assertNone dt
 
     let checkExecutionWeekdaysAt (dt:DateTime) wd h c =  
-         match dt.DayOfWeek = wd with
-         | true -> checkExecutionAtHour dt h c
-         | false -> testExecute dt c |> assertNone dt
+        match dt.DayOfWeek = wd with
+        | true -> checkExecutionAtHour dt h c
+        | false -> testExecute dt c |> assertNone dt
 
     let assertCommandExecution (dt:DateTime) c =        
         match c.interval with

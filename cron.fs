@@ -4,18 +4,18 @@ open System
 
 module CronDomain =         
 
-    let hourly h n (c:Command) =
+    let CheckHourly h n (c:Command) =
         let due = n % h
         match due with
         | 0 -> Some c
         | _ -> None
 
-    let weekday (wd:DayOfWeek) (n:DayOfWeek) (c:Command) =
+    let CheckWeekday (wd:DayOfWeek) (n:DayOfWeek) (c:Command) =
         match wd.CompareTo(n) with
         | 0 -> Some c
         | _ -> None
 
-    let oclock oc h c =
+    let CheckOClock oc h c =
         let difference = oc - h
         match difference with 
         | 0 -> Some c
@@ -36,25 +36,24 @@ module CronDomain =
         | false -> None
 
     let CheckWeekdDayAt wd h (dt:DateTime) =
-        weekday wd dt.DayOfWeek
-        &&& oclock h dt.Hour
+        CheckWeekday wd dt.DayOfWeek
+        &&& CheckOClock h dt.Hour
 
     let CheckMonthlyAt n wd h (dt:DateTime) =
         week n dt 
-        &&& weekday wd dt.DayOfWeek 
-        &&& oclock h dt.Hour
+        &&& CheckWeekday wd dt.DayOfWeek 
+        &&& CheckOClock h dt.Hour
 
     let intervalDue (dt:DateTime) (c:Command) =        
         match c.interval with
-        | Hourly h -> hourly h dt.Hour c
-        | DailyAt oc -> oclock oc dt.Hour c
-        | WeekdayAt (wd,h) -> c|> CheckWeekdDayAt wd h dt
+        | Hourly h -> c |> CheckHourly h dt.Hour
+        | DailyAt oc -> c |> CheckOClock oc dt.Hour
+        | WeekdayAt (wd,h) -> c |> CheckWeekdDayAt wd h dt
         | MonthlyAt (n,wd,h) -> c |> CheckMonthlyAt n wd h dt
         | Disabled -> None
 
     let intervalDueNow =
         intervalDue DateTime.Now
-
     
     let execute r e (c:Command) =
         match intervalDueNow c with

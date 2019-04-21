@@ -3,15 +3,15 @@ namespace Inw.Cron
 [<AutoOpen>]
 module Operators =
     
-    //binds output to 1-track function
+    //binds 2-track output to 1-track function
     let (>>=) input outfun = 
         input |> Option.bind outfun
 
-    //binds function to create a even bigger switch
+    //combines function to create a even bigger switch
     let (>=>) switchFunction1 switchFunction2  =        
         switchFunction1 >> (Option.bind switchFunction2)
 
-    //paralellize switches
+    //paralellize option switches
     let plusOption addSome switch1 switch2 x =
         match (switch1 x),(switch2 x) with
         | Some s1,Some s2 -> Some (addSome s1 s2)

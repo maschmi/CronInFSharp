@@ -29,7 +29,6 @@ module CronTest =
             let commands = createCommandForEveryWeekday randomHour
             let testTimes = createTestTimes 30
             runCommandsForTest testTimes commands
-
         
         [<Fact>]
         let ExecuteFirstMondayInApril_ExecutesAtGivenHourAtFirstMonday () =
@@ -40,7 +39,6 @@ module CronTest =
                 | MonthlyAt (_,_,h) -> checkExecutionAtHour dt h c
                 | _ -> Assert.False(true, "Testcase not definded")        
             runAssertions executedAtHr testTimes [command]
-               
 
         [<Fact>]
         let ExecuteFirstMondayInApril_NotExecutesAtGivenHourAtSecondMonday () =
