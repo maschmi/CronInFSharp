@@ -102,3 +102,7 @@ module CronTestHelper =
 
     let runCommandsForTest (dt:DateTime list) (c:Command list) =        
         runAssertions assertCommandExecution dt c    
+
+    let neverExecuted (dt:DateTime) c =
+        match c.interval with
+        | _ -> testExecute dt c |> assertNone dt

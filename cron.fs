@@ -35,13 +35,21 @@ module CronDomain =
         | true -> Some c
         | false -> None
 
-    
+    let CheckWeekdDayAt wd h (dt:DateTime) =
+        weekday wd dt.DayOfWeek
+        &&& oclock h dt.Hour
+
+    let CheckMonthlyAt n wd h (dt:DateTime) =
+        week n dt 
+        &&& weekday wd dt.DayOfWeek 
+        &&& oclock h dt.Hour
+
     let intervalDue (dt:DateTime) (c:Command) =        
         match c.interval with
         | Hourly h -> hourly h dt.Hour c
         | DailyAt oc -> oclock oc dt.Hour c
-        | WeekdayAt (wd,h) -> c |> weekday wd dt.DayOfWeek >>= oclock h dt.Hour
-        | MonthlyAt (n,wd,h) -> c |> week n dt >>= weekday wd dt.DayOfWeek >>= oclock h dt.Hour
+        | WeekdayAt (wd,h) -> c|> CheckWeekdDayAt wd h dt
+        | MonthlyAt (n,wd,h) -> c |> CheckMonthlyAt n wd h dt
         | Disabled -> None
 
     let intervalDueNow =

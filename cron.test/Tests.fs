@@ -30,29 +30,35 @@ module CronTest =
             let testTimes = createTestTimes 30
             runCommandsForTest testTimes commands
 
+        
         [<Fact>]
         let ExecuteFirstMondayInApril_ExecutesAtGivenHourAtFirstMonday () =
             let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
             let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 01)
-            runCommandsForTest testTimes [command]
-            
+            let executedAtHr (dt:DateTime) c =
+                match c.interval with
+                | MonthlyAt (_,_,h) -> checkExecutionAtHour dt h c
+                | _ -> Assert.False(true, "Testcase not definded")        
+            runAssertions executedAtHr testTimes [command]
+               
+
         [<Fact>]
         let ExecuteFirstMondayInApril_NotExecutesAtGivenHourAtSecondMonday () =
             let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
             let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 08)
-            runCommandsForTest testTimes [command]
+            runAssertions neverExecuted testTimes [command]
 
         [<Fact>]
         let ExecuteFirstMondayInApril_NotExecutesAtGivenHourAtThirdMonday () =
             let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
             let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 15)
-            runCommandsForTest testTimes [command]
+            runAssertions neverExecuted testTimes [command]
 
         [<Fact>]
         let ExecuteFirstMondayInApril_NotExecutesAtGivenHourAtFourhtMonday () =
             let command = { id = "monthly"; message = "yay"; interval = MonthlyAt (First, DayOfWeek.Monday, 12)}
             let testTimes = hoursOfDay |> List.map (createHourAtDay 2019 04 22)
-            runCommandsForTest testTimes [command]
+            runAssertions neverExecuted testTimes [command]
 
         [<Fact>]
         let ExecuteFirstMondayInApril_NotExecutesAtGivenHourAtLastMonday () =
